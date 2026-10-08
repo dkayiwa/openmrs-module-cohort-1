@@ -27,6 +27,7 @@
         <dependency>
             <groupId>org.openmrs.api</groupId>
             <artifactId>openmrs-api</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.openmrs.api</groupId>
@@ -39,11 +40,6 @@
             <artifactId>openmrs-test</artifactId>
             <type>pom</type>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs.api</groupId>
-            <artifactId>openmrs-api</artifactId>
-            <scope>compile</scope>
         </dependency>
         <!-- End OpenMRS core -->
     </dependencies>
