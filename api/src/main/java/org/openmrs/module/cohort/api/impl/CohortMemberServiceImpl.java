@@ -17,6 +17,7 @@ import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Setter;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.customdatatype.CustomDatatypeUtil;
 import org.openmrs.module.cohort.CohortMember;
 import org.openmrs.module.cohort.CohortMemberAttribute;
 import org.openmrs.module.cohort.CohortMemberAttributeType;
@@ -63,6 +64,7 @@ public class CohortMemberServiceImpl extends BaseOpenmrsService implements Cohor
 	
 	@Override
 	public CohortMember saveCohortMember(CohortMember cohortMember) {
+		CustomDatatypeUtil.saveAttributesIfNecessary(cohortMember);
 		return cohortMemberDao.createOrUpdate(cohortMember);
 	}
 	
@@ -124,6 +126,7 @@ public class CohortMemberServiceImpl extends BaseOpenmrsService implements Cohor
 	
 	@Override
 	public CohortMemberAttribute saveCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute) {
+		CustomDatatypeUtil.saveIfDirty(cohortMemberAttribute);
 		return cohortMemberAttributeDao.createOrUpdate(cohortMemberAttribute);
 	}
 	

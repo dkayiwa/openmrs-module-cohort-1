@@ -18,6 +18,9 @@ import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Test;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
+import org.openmrs.customdatatype.datatype.FreeTextDatatype;
+import org.openmrs.module.cohort.CohortAttribute;
+import org.openmrs.module.cohort.CohortAttributeType;
 import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.CohortMember;
 import org.openmrs.module.cohort.CohortType;
@@ -129,6 +132,29 @@ public class CohortServiceImplContextSensitiveTest extends BaseModuleContextSens
 		
 		assertThat(result, notNullValue());
 		assertThat(result.size(), equalTo(0));
+	}
+	
+	@Test
+	public void saveCohortAttribute_shouldSaveTheValueOfANewAttribute() {
+		CohortService cohortService = Context.getService(CohortService.class);
+		CohortAttributeType facility = new CohortAttributeType();
+		facility.setName("Facility");
+		facility.setDatatypeClassname(FreeTextDatatype.class.getName());
+		cohortService.saveCohortAttributeType(facility);
+		CohortM cohort = new CohortM();
+		cohort.setName("Test Cohort");
+		cohort.setDescription("Test Cohort Description");
+		cohortService.saveCohortM(cohort);
+		CohortAttribute attribute = new CohortAttribute();
+		attribute.setCohort(cohort);
+		attribute.setAttributeType(facility);
+		attribute.setValue("Kisumu");
+		
+		cohortService.saveCohortAttribute(attribute);
+		Context.flushSession();
+		Context.clearSession();
+		
+		assertThat(cohortService.getCohortAttributeByUuid(attribute.getUuid()).getValueReference(), equalTo("Kisumu"));
 	}
 	
 	@Test

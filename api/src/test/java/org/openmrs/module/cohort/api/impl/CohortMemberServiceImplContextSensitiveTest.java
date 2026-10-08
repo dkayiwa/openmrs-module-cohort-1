@@ -11,6 +11,7 @@ package org.openmrs.module.cohort.api.impl;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,7 +20,10 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openmrs.api.context.Context;
+import org.openmrs.customdatatype.datatype.FreeTextDatatype;
 import org.openmrs.module.cohort.CohortMember;
+import org.openmrs.module.cohort.CohortMemberAttribute;
+import org.openmrs.module.cohort.CohortMemberAttributeType;
 import org.openmrs.module.cohort.api.CohortMemberService;
 import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 
@@ -62,6 +66,26 @@ public class CohortMemberServiceImplContextSensitiveTest extends BaseModuleConte
 		        .findCohortMembersByPatientUuid(PATIENT_UUID);
 		
 		assertThat(uuidsOf(members), containsInAnyOrder(PATIENT_COVID_MEMBER_UUID, PATIENT_REJOINED_TB_MEMBER_UUID));
+	}
+	
+	@Test
+	public void saveCohortMemberAttribute_shouldSaveTheValueOfANewAttribute() {
+		CohortMemberService cohortMemberService = Context.getService(CohortMemberService.class);
+		CohortMemberAttributeType role = new CohortMemberAttributeType();
+		role.setName("Role");
+		role.setDatatypeClassname(FreeTextDatatype.class.getName());
+		cohortMemberService.saveCohortMemberAttributeType(role);
+		CohortMemberAttribute attribute = new CohortMemberAttribute();
+		attribute.setCohortMember(cohortMemberService.getCohortMemberByUuid(PATIENT_COVID_MEMBER_UUID));
+		attribute.setAttributeType(role);
+		attribute.setValue("treasurer");
+		
+		cohortMemberService.saveCohortMemberAttribute(attribute);
+		Context.flushSession();
+		Context.clearSession();
+		
+		assertThat(cohortMemberService.getCohortMemberAttributeByUuid(attribute.getUuid()).getValueReference(),
+		    equalTo("treasurer"));
 	}
 	
 	private static List<String> uuidsOf(Collection<CohortMember> members) {

@@ -295,7 +295,7 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 				a.setVoidedBy(authenticatedUser);
 			});
 			
-			cohort.getActiveAttributes().addAll(attributeSet);
+			attributeSet.forEach(cohort::addAttribute);
 		}
 	}
 	
